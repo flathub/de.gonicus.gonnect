@@ -83,7 +83,7 @@ modules:
         commit: 4739a0f09cd005b9584f740637882be41ec0f062
       - type: patch
         path: patches/qtwebdav-cmake.patch
-  
+
   - name: vcard
     buildsystem: cmake-ninja
     sources:
@@ -115,8 +115,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v1.1.0
-        commit: 559c8765e585ade21c5243699418fa5ab549cb14
+        tag: v1.1.1
+        commit: c62e245b82ddcb0fdc921480f004894bd6b6476d
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
