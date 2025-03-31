@@ -77,10 +77,12 @@ modules:
 
   - name: qtwebdav
     buildsystem: cmake-ninja
+    config-opts:
+    - -DBUILD_WITH_QT6=ON
     sources:
       - type: git
         url: https://github.com/PikachuHy/QtWebDAV.git
-        commit: 4739a0f09cd005b9584f740637882be41ec0f062
+        commit: ac39687b8ae16118d385d3694e900becd108a0f2
       - type: patch
         path: patches/qtwebdav-cmake.patch
 
@@ -115,8 +117,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v1.3.5
-        commit: b00de762c460620c44c04295e9ffe233d0f41260
+        tag: v1.3.7
+        commit: 9437f678723727a1be3ba2a6eab259dabbd30ac4
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
