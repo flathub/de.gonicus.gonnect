@@ -78,7 +78,7 @@ modules:
   - name: qtwebdav
     buildsystem: cmake-ninja
     config-opts:
-    - -DBUILD_WITH_QT6=ON
+      - -DBUILD_WITH_QT6=ON
     sources:
       - type: git
         url: https://github.com/PikachuHy/QtWebDAV.git
@@ -91,7 +91,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/ivanenko/vCard.git
-        commit: 733afa9571a728548106c5131c48895bd932e881
+        commit: 9e6a5349d27733c931815b2e236807f3414ab251
       - type: patch
         path: patches/vcard-cmake.patch
 
@@ -117,8 +117,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v1.3.7
-        commit: 9437f678723727a1be3ba2a6eab259dabbd30ac4
+        tag: v1.3.8
+        commit: ac2cdd35b8f0433627f8ed6b669dab118a324219
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
