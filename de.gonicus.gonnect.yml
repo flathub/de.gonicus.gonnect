@@ -102,8 +102,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/libusb/hidapi.git
-        tag: hidapi-0.14.0
-        commit: d3013f0af3f4029d82872c1a9487ea461a56dee4
+        tag: hidapi-0.15.0
+        commit: d6b2a974608dec3b76fb1e36c189f22b9cf3650c
         x-checker-data:
           type: git
           tag-pattern: ^(hidapi-[0-9.]+)$
@@ -117,8 +117,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v1.3.9
-        commit: de7e27a4e5029b5693559e714773c5a4540b114e
+        tag: v1.3.10
+        commit: 2865e17e89c094375d41908679ca06e8ef953b81
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
