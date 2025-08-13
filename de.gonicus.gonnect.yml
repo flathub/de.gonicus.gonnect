@@ -26,7 +26,7 @@ finish-args:
   - --talk-name=org.gnome.evolution.dataserver.Calendar8
   - --talk-name=org.gnome.evolution.dataserver.Sources5
   - --talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*
-  # Access for the default avatars, fix this later
+  # Access for the default avatars, fix this later on
   # - --filesystem=xdg-data/pixmaps/faces:create
   # Access for evolution-data-server avatars
   # - --filesystem=xdg-cache/evolution/addressbook:ro
