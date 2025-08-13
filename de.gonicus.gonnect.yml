@@ -212,7 +212,7 @@ modules:
       - type: git
         url: https://github.com/gonicus/gonnect.git
         tag: v2.0.0
-        commit: 99abbfa272283db4320e9973ab369f634c3e9ebf
+        commit: 82de5830427a6eb0147220605f9745bcbb866d2e
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
