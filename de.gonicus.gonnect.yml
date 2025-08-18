@@ -169,8 +169,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://download.gnome.org/sources/evolution-data-server/3.57/evolution-data-server-3.57.2.tar.xz
-        sha256: 9b2647c4265e0a6767fe19c7d602eb9bdcf3f428e4f9c41617e962a7fff9eebd
+        url: https://download.gnome.org/sources/evolution-data-server/3.56/evolution-data-server-3.56.0.tar.xz
+        sha256: 7ae5482aa4ee2894467716c5be982500e1d511dddf4ab29b68fdb107d7f8a8ff
         x-checker-data:
           type: gnome
           name: evolution-data-server
@@ -211,8 +211,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.1.0
-        commit: ef33743d330db0a66e614eb352c70a76ca6374e6
+        tag: v2.0.3
+        commit: 51a5d554e53cb5cbc3c01af22eb3963121737a3c
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
