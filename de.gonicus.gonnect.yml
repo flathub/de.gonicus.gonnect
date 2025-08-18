@@ -211,8 +211,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.0.2
-        commit: 83b8a94d75c08a15c11657924a262e0e47e3b681
+        tag: v2.0.3
+        commit: 51a5d554e53cb5cbc3c01af22eb3963121737a3c
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
