@@ -53,8 +53,8 @@ modules:
       - install -Dm644 ../krb5.conf -t ${FLATPAK_DEST}/etc/
     sources:
       - type: archive
-        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.3.tar.gz
-        sha256: b7a4cd5ead67fb08b980b21abd150ff7217e85ea320c9ed0c6dadd304840ad35
+        url: https://kerberos.org/dist/krb5/1.22/krb5-1.22.1.tar.gz
+        sha256: 1a8832b8cad923ebbf1394f67e2efcf41e3a49f460285a66e35adec8fa0053af
         x-checker-data:
           type: anitya
           project-id: 13287
@@ -169,8 +169,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://download.gnome.org/sources/evolution-data-server/3.56/evolution-data-server-3.56.0.tar.xz
-        sha256: 7ae5482aa4ee2894467716c5be982500e1d511dddf4ab29b68fdb107d7f8a8ff
+        url: https://download.gnome.org/sources/evolution-data-server/3.57/evolution-data-server-3.57.3.tar.xz
+        sha256: 16432ee36af18a57736c07d3feec218bba5e5544a4dc437fca11e231086c8cb7
         x-checker-data:
           type: gnome
           name: evolution-data-server
@@ -211,8 +211,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.0.3
-        commit: 51a5d554e53cb5cbc3c01af22eb3963121737a3c
+        tag: v2.0.4
+        commit: 3ecd02f0bfca1e1185e1e4eba2fcd7bf2655621e
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
