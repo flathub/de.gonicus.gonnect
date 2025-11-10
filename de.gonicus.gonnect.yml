@@ -124,6 +124,20 @@ modules:
           name: libsecret
           stable-only: true
 
+  - name: qtkeychain
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+    - -DBUILD_WITH_QT6=ON
+    sources:
+      - type: git
+        url: https://github.com/frankosterfeld/qtkeychain.git
+        tag: 0.15.0
+        commit: ad7344c45a86a4f66cbafc4b081b5f7b876cb0b7
+        x-checker-data:
+          type: git
+          tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
+
   - name: libical
     cleanup:
       - /lib/cmake
