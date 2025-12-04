@@ -128,7 +128,7 @@ modules:
     buildsystem: cmake-ninja
     builddir: true
     config-opts:
-    - -DBUILD_WITH_QT6=ON
+      - -DBUILD_WITH_QT6=ON
     sources:
       - type: git
         url: https://github.com/frankosterfeld/qtkeychain.git
@@ -186,8 +186,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://download.gnome.org/sources/evolution-data-server/3.58/evolution-data-server-3.58.0.tar.xz
-        sha256: a2b5a0b8db11b728edc1d6f1c229dc2711962b7a87c0384221dac8d96000cef7
+        url: https://download.gnome.org/sources/evolution-data-server/3.58/evolution-data-server-3.58.2.tar.xz
+        sha256: 6942ecfc39ebb36b0b4363adff00771c1c2dfa34f54e80ec92c3baa3feb020fb
         x-checker-data:
           type: gnome
           name: evolution-data-server
