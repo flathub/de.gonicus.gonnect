@@ -126,8 +126,8 @@ modules:
           name: libsecret
           stable-only: true
     cleanup:
-    - /bin
-    - /share/man
+      - /bin
+      - /share/man
 
   - name: qtkeychain
     buildsystem: cmake-ninja
@@ -196,8 +196,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://download.gnome.org/sources/evolution-data-server/3.58/evolution-data-server-3.58.1.tar.xz
-        sha256: a914928814ef887f0979ba78ea8d7bcc98f96cf07cbb70b0051980bd90ec35f0
+        url: https://download.gnome.org/sources/evolution-data-server/3.58/evolution-data-server-3.58.2.tar.xz
+        sha256: 6942ecfc39ebb36b0b4363adff00771c1c2dfa34f54e80ec92c3baa3feb020fb
         x-checker-data:
           type: gnome
           name: evolution-data-server
