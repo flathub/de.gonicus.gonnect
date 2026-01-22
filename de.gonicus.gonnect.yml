@@ -6,6 +6,17 @@ base: io.qt.qtwebengine.BaseApp
 base-version: '6.10'
 command: gonnect
 
+add-extensions:
+  de.gonicus.gonnect.plugin:
+    version: "2"
+    directory: plugins
+    subdirectories: true
+    no-autodownload: true
+    autodelete: true
+  de.gonicus.gonnect.provisioning:
+    directory: etc/gonnect
+    no-autodownload: true
+
 finish-args:
   - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
   - --device=all
@@ -226,6 +237,17 @@ modules:
           type: git
           tag-pattern: ^(hidapi-[0-9.]+)$
 
+  - name: logfault
+    buildsystem: cmake-ninja
+    sources:
+      - type: git
+        url: https://github.com/jgaa/logfault.git
+        tag: v0.8.1
+        commit: 9851bceb50e53de21cbbf27fef0b79c19667d3ec
+        x-checker-data:
+          type: git
+          tag-pattern: ^(v[0-9.]+)$          
+
   - name: gonnect
     buildsystem: cmake-ninja
     config-opts:
@@ -234,17 +256,14 @@ modules:
       - -DCMAKE_INSTALL_RPATH=/usr/lib
       - -DCMAKE_UNITY_BUILD=ON
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
+      - -DENABLE_GOW_001=ON
       - -DENABLE_GOW_002=ON
       - -DENABLE_GOW_003=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.0.9
-        commit: 6bb571b04baeafd0fb6793bb92c926d6675864a8
-        x-checker-data:
-          type: git
-          tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
+        branch: freeze/v210
     cleanup:
       - rm /bin/update-emojis
 
