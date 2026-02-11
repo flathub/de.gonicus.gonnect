@@ -35,6 +35,14 @@ finish-args:
   # Kerberos socket
   - --filesystem=/run/.heim_org.h5l.kcm-socket
 
+cleanup:
+  - 
+  - '*.la'
+  - '*.a'
+
+cleanup-commands:
+  - /app/cleanup-BaseApp.sh
+
 modules:
   - name: kerberos
     subdir: src
@@ -247,6 +255,3 @@ modules:
           tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
     cleanup:
       - rm /bin/update-emojis
-
-cleanup-commands:
-  - /app/cleanup-BaseApp.sh
