@@ -32,6 +32,10 @@ finish-args:
   - --talk-name=org.mpris.MediaPlayer2.*
   # KDE Systray Icon/Menu
   - --talk-name=org.kde.StatusNotifierWatcher
+  # KDE KWallet (in older KDE installations the standard secret
+  # portal communication does not work, so we need to allow
+  # direct kwalletd communication as a fallback for the keychain
+  - --talk-name=org.kde.kwalletd5
   # Evolution Dataserver contact source
   - --talk-name=org.gnome.evolution.dataserver.AddressBook10
   - --talk-name=org.gnome.evolution.dataserver.Calendar8
