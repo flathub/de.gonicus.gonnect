@@ -36,7 +36,6 @@ finish-args:
   - --filesystem=/run/.heim_org.h5l.kcm-socket
 
 cleanup:
-  - 
   - '*.la'
   - '*.a'
 
