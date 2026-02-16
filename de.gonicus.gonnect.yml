@@ -32,6 +32,10 @@ finish-args:
   - --talk-name=org.mpris.MediaPlayer2.*
   # KDE Systray Icon/Menu
   - --talk-name=org.kde.StatusNotifierWatcher
+  # KDE KWallet (in older KDE installations the standard secret
+  # portal communication does not work, so we need to allow
+  # direct kwalletd communication as a fallback for the keychain
+  - --talk-name=org.kde.kwalletd5
   # Evolution Dataserver contact source
   - --talk-name=org.gnome.evolution.dataserver.AddressBook10
   - --talk-name=org.gnome.evolution.dataserver.Calendar8
@@ -45,6 +49,18 @@ finish-args:
   - --filesystem=xdg-download:rw
   # Kerberos socket
   - --filesystem=/run/.heim_org.h5l.kcm-socket
+
+cleanup:
+  - '*.la'
+  - '*.a'
+  - '*.qml'
+  - /share/gir-1.0
+
+cleanup-commands:
+  - /app/cleanup-BaseApp.sh
+  - rm /app/resources/qtwebengine_devtools_resources.pak
+  - mkdir -p ${FLATPAK_DEST}/plugins
+  - mkdir -p ${FLATPAK_DEST}/etc/gonnect
 
 modules:
   - name: kerberos
@@ -79,12 +95,12 @@ modules:
       - --disable-video
       - --enable-ext-sound
       - --with-opus
-      - CFLAGS=-fPIC -DPJ_HAS_IPV6=1
+      - CFLAGS=-fPIC -DPJ_HAS_IPV6=1 -DPJSIP_MAX_PKT_LEN=8192 -DPJMEDIA_HAS_RTCP_XR=1
     sources:
       - type: git
         url: https://github.com/pjsip/pjproject.git
-        tag: 2.15.1
-        commit: 7de6e686fee1642f5443a3f39f0e5ad5e478a117
+        tag: 2.16
+        commit: 6cab30cec44af36ba7c8a45ff7af2f74a8ed288c
         x-checker-data:
           type: git
           tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
@@ -120,25 +136,6 @@ modules:
         commit: ac39687b8ae16118d385d3694e900becd108a0f2
       - type: patch
         path: patches/qtwebdav-cmake.patch
-
-  - name: libsecret
-    buildsystem: meson
-    config-opts:
-      - -Dmanpage=false
-      - -Dvapi=false
-      - -Dgtk_doc=false
-      - -Dintrospection=false
-    sources:
-      - type: archive
-        url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.7.tar.xz
-        sha256: 6b452e4750590a2b5617adc40026f28d2f4903de15f1250e1d1c40bfd68ed55e
-        x-checker-data:
-          type: gnome
-          name: libsecret
-          stable-only: true
-    cleanup:
-      - /bin
-      - /share/man
 
   - name: qtkeychain
     buildsystem: cmake-ninja
@@ -224,8 +221,6 @@ modules:
       - type: patch
         path: patches/vcard-cmake.patch
 
-  - shared-modules/libusb/libusb.json
-
   - name: hidapi
     buildsystem: cmake-ninja
     sources:
@@ -246,7 +241,7 @@ modules:
         commit: 9851bceb50e53de21cbbf27fef0b79c19667d3ec
         x-checker-data:
           type: git
-          tag-pattern: ^(v[0-9.]+)$          
+          tag-pattern: ^(v[0-9.]+)$
 
   - name: gonnect
     buildsystem: cmake-ninja
@@ -263,10 +258,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.1.0-beta.2
-        commit: cb11ef20c94a18e4a1c2a178afa79d009f17f330
+        tag: v2.1.0-beta.3
+        commit: 77d3e0f99db764914784ed946052a3575d6706b6
     cleanup:
       - rm /bin/update-emojis
-
-cleanup-commands:
-  - /app/cleanup-BaseApp.sh
