@@ -43,7 +43,7 @@ finish-args:
   - --talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*
   # Access for evolution-data-server avatars
   - --filesystem=xdg-data/evolution/addressbook/system/photos:ro
-  # Access to music folder for ring tones  
+  # Access to music folder for ring tones
   - --filesystem=xdg-music:ro
   # Place to save download chat attachments
   - --filesystem=xdg-download:rw
@@ -89,21 +89,32 @@ modules:
       - type: file
         path: krb5.conf
 
+  - name: opencore-amr
+    buildsystem: autotools
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://sourceforge.net/projects/opencore-amr/files/opencore-amr/opencore-amr-0.1.6.tar.gz
+        sha256: 483eb4061088e2b34b358e47540b5d495a96cd468e361050fae615b1809dc4a1
+
   - name: pjsip
     buildsystem: autotools
     config-opts:
       - --disable-video
       - --enable-ext-sound
       - --with-opus
-      - CFLAGS=-fPIC -DPJ_HAS_IPV6=1 -DPJSIP_MAX_PKT_LEN=8192 -DPJMEDIA_HAS_RTCP_XR=1
+      - CFLAGS=-fPIC
     sources:
       - type: git
         url: https://github.com/pjsip/pjproject.git
-        tag: 2.16
+        tag: "2.16"
         commit: 6cab30cec44af36ba7c8a45ff7af2f74a8ed288c
         x-checker-data:
           type: git
           tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
+      - type: patch
+        path: patches/pjproject-site-config.patch
 
   - name: openldap
     config-opts:
@@ -124,7 +135,7 @@ modules:
           type: anitya
           stable-only: true
           project-id: 2551
-          url-template: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz
+          url-template: "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz"
 
   - name: qtwebdav
     buildsystem: cmake-ninja
@@ -258,7 +269,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.1.0-beta.3
-        commit: 77d3e0f99db764914784ed946052a3575d6706b6
+        tag: v2.1.0-beta.4
+        commit: 665de5b92852cad56c45e1c53cc48994c2f40bac
     cleanup:
-      - rm /bin/update-emojis
+      - /bin/update-emojis
