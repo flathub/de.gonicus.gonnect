@@ -98,8 +98,8 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.10.tgz
-        sha256: c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516
+        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.13.tgz
+        sha256: d693b49517a42efb85a1a364a310aed16a53d428d1b46c0d31ef3fba78fcb656
         x-checker-data:
           type: anitya
           stable-only: true
@@ -203,8 +203,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://download.gnome.org/sources/evolution-data-server/3.59/evolution-data-server-3.59.2.tar.xz
-        sha256: 15bd798c85dee923462bebe880761b4668b6c5065584e840900988389add83bf
+        url: https://download.gnome.org/sources/evolution-data-server/3.60/evolution-data-server-3.60.0.tar.xz
+        sha256: e04e383e0e28b24d91b3d373f6ffb87a5d46ba3845c7999c412cc7813adf6c18
         x-checker-data:
           type: gnome
           name: evolution-data-server
