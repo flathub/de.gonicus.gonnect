@@ -6,6 +6,17 @@ base: io.qt.qtwebengine.BaseApp
 base-version: '6.10'
 command: gonnect
 
+add-extensions:
+  de.gonicus.gonnect.plugin:
+    version: "2"
+    directory: plugins
+    subdirectories: true
+    no-autodownload: true
+    autodelete: true
+  de.gonicus.gonnect.provisioning:
+    directory: etc/gonnect
+    no-autodownload: true
+
 finish-args:
   - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
   - --device=all
@@ -21,6 +32,10 @@ finish-args:
   - --talk-name=org.mpris.MediaPlayer2.*
   # KDE Systray Icon/Menu
   - --talk-name=org.kde.StatusNotifierWatcher
+  # KDE KWallet (in older KDE installations the standard secret
+  # portal communication does not work, so we need to allow
+  # direct kwalletd communication as a fallback for the keychain
+  - --talk-name=org.kde.kwalletd5
   # Evolution Dataserver contact source
   - --talk-name=org.gnome.evolution.dataserver.AddressBook10
   - --talk-name=org.gnome.evolution.dataserver.Calendar8
@@ -28,7 +43,7 @@ finish-args:
   - --talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*
   # Access for evolution-data-server avatars
   - --filesystem=xdg-data/evolution/addressbook/system/photos:ro
-  # Access to music folder for ring tones  
+  # Access to music folder for ring tones
   - --filesystem=xdg-music:ro
   # Place to save download chat attachments
   - --filesystem=xdg-download:rw
@@ -38,11 +53,30 @@ finish-args:
 cleanup:
   - '*.la'
   - '*.a'
+  - '*.qml'
+  - /share/gir-1.0
 
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
+  - rm /app/resources/qtwebengine_devtools_resources.pak
+  - mkdir -p ${FLATPAK_DEST}/plugins
+  - mkdir -p ${FLATPAK_DEST}/etc/gonnect
 
 modules:
+  - name: libnotify
+    buildsystem: meson
+    config-opts:
+      - -Dtests=false
+      - -Dintrospection=disabled
+      - -Dman=false
+      - -Ddocbook_docs=disabled
+    sources:
+      - type: archive
+        url: https://gitlab.gnome.org/GNOME/libnotify/-/archive/0.8.8/libnotify-0.8.8.tar.bz2
+        sha256: fc7e901f6a5eec29a604d33c88a0f26caed405bbe7dd24d098fbb15d3c049419
+      - type: patch
+        path: patches/libnotify-default-action.patch
+
   - name: kerberos
     subdir: src
     config-opts:
@@ -69,21 +103,52 @@ modules:
       - type: file
         path: krb5.conf
 
+  - name: opencore-amr
+    buildsystem: autotools
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://sourceforge.net/projects/opencore-amr/files/opencore-amr/opencore-amr-0.1.6.tar.gz
+        sha256: 483eb4061088e2b34b358e47540b5d495a96cd468e361050fae615b1809dc4a1
+        x-checker-data:
+          type: anitya
+          project-id: 21548
+          stable-only: true
+          url-template: https://sourceforge.net/projects/opencore-amr/files/opencore-amr/opencore-amr-${major}.${minor}.${patch}.tar.gz
+
+  - name: vo-amrwbenc
+    buildsystem: autotools
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://downloads.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-0.1.3.tar.gz
+        sha256: 5652b391e0f0e296417b841b02987d3fd33e6c0af342c69542cbb016a71d9d4e
+        x-checker-data:
+          type: anitya
+          project-id: 322571
+          stable-only: true
+          url-template: https://downloads.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-${major}.${minor}.${patch}.tar.gz
+
   - name: pjsip
     buildsystem: autotools
     config-opts:
       - --disable-video
       - --enable-ext-sound
       - --with-opus
-      - CFLAGS=-fPIC -DPJ_HAS_IPV6=1
+      - --enable-libwebrtc-aec3
+      - CFLAGS=-fPIC
     sources:
       - type: git
         url: https://github.com/pjsip/pjproject.git
-        tag: 2.15.1
-        commit: 7de6e686fee1642f5443a3f39f0e5ad5e478a117
+        tag: "2.16"
+        commit: 6cab30cec44af36ba7c8a45ff7af2f74a8ed288c
         x-checker-data:
           type: git
           tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
+      - type: patch
+        path: patches/pjproject-site-config.patch
 
   - name: openldap
     config-opts:
@@ -98,13 +163,13 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.10.tgz
-        sha256: c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516
+        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.13.tgz
+        sha256: d693b49517a42efb85a1a364a310aed16a53d428d1b46c0d31ef3fba78fcb656
         x-checker-data:
           type: anitya
           stable-only: true
           project-id: 2551
-          url-template: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz
+          url-template: "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz"
 
   - name: qtwebdav
     buildsystem: cmake-ninja
@@ -116,25 +181,6 @@ modules:
         commit: ac39687b8ae16118d385d3694e900becd108a0f2
       - type: patch
         path: patches/qtwebdav-cmake.patch
-
-  - name: libsecret
-    buildsystem: meson
-    config-opts:
-      - -Dmanpage=false
-      - -Dvapi=false
-      - -Dgtk_doc=false
-      - -Dintrospection=false
-    sources:
-      - type: archive
-        url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.7.tar.xz
-        sha256: 6b452e4750590a2b5617adc40026f28d2f4903de15f1250e1d1c40bfd68ed55e
-        x-checker-data:
-          type: gnome
-          name: libsecret
-          stable-only: true
-    cleanup:
-      - /bin
-      - /share/man
 
   - name: qtkeychain
     buildsystem: cmake-ninja
@@ -220,8 +266,6 @@ modules:
       - type: patch
         path: patches/vcard-cmake.patch
 
-  - shared-modules/libusb/libusb.json
-
   - name: hidapi
     buildsystem: cmake-ninja
     sources:
@@ -233,6 +277,17 @@ modules:
           type: git
           tag-pattern: ^(hidapi-[0-9.]+)$
 
+  - name: logfault
+    buildsystem: cmake-ninja
+    sources:
+      - type: git
+        url: https://github.com/jgaa/logfault.git
+        tag: v0.8.1
+        commit: 9851bceb50e53de21cbbf27fef0b79c19667d3ec
+        x-checker-data:
+          type: git
+          tag-pattern: ^(v[0-9.]+)$
+
   - name: gonnect
     buildsystem: cmake-ninja
     config-opts:
@@ -241,16 +296,14 @@ modules:
       - -DCMAKE_INSTALL_RPATH=/usr/lib
       - -DCMAKE_UNITY_BUILD=ON
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
+      - -DENABLE_GOW_001=ON
       - -DENABLE_GOW_002=ON
       - -DENABLE_GOW_003=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.0.9
-        commit: 6bb571b04baeafd0fb6793bb92c926d6675864a8
-        x-checker-data:
-          type: git
-          tag-pattern: ^(v[0-9]+\.[0-9]+\.[0-9]+)$
+        tag: v2.1.0
+        commit: 6f31bcecb3693f81658395754f408db894b9d1d9
     cleanup:
-      - rm /bin/update-emojis
+      - /bin/update-emojis
