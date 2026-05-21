@@ -142,7 +142,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/pjsip/pjproject.git
-        tag: 2.17
+        tag: '2.17'
         commit: 5a457451fa2712ba18e12b01738e8ff3af2b26fd
         x-checker-data:
           type: git
@@ -305,7 +305,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.2.0-beta.6
-        commit: 22f2204dee55704edd60834052d256d19ba4d934
+        tag: v2.2.0-beta.7
+        commit: 8f04b95b6feeeb9f65c3125daa0ca0548d4c2873
     cleanup:
       - /bin/update-emojis
