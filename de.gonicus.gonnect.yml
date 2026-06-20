@@ -211,6 +211,7 @@ modules:
       - -DGOBJECT_INTROSPECTION=true
       - -DICAL_GLIB_VAPI=false
       - -DICAL_BUILD_DOCS=false
+      - -DLIBICAL_JAVA_BINDINGS=False
     sources:
       - type: archive
         url: https://github.com/libical/libical/releases/download/v4.0.3/libical-4.0.3.tar.gz
