@@ -133,6 +133,7 @@ modules:
 
   - name: pjsip
     buildsystem: autotools
+    no-parallel-make: true
     config-opts:
       - --disable-video
       - --enable-ext-sound
@@ -307,7 +308,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.3.1
-        commit: b7ee752a623e56ada63db8fd5d32117ee13a606b
+        tag: v2.3.2
+        commit: 6f48a0f20b10f730b2963840c5efbaaca61c4a46
     cleanup:
       - /bin/update-emojis
