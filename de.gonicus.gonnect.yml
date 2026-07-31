@@ -308,7 +308,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.4.0
-        commit: b4f5497ae1d5917ef778cffa04e5714c02c167b7
+        tag: v2.4.1
+        commit: bc537e2ef5a2987147c311940ace0a7284fd9692
     cleanup:
       - /bin/update-emojis
