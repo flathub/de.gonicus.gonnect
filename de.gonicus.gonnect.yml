@@ -5,7 +5,6 @@ sdk: org.kde.Sdk
 base: io.qt.qtwebengine.BaseApp
 base-version: '6.11'
 command: gonnect
-
 add-extensions:
   de.gonicus.gonnect.plugin:
     version: '3'
@@ -16,7 +15,6 @@ add-extensions:
   de.gonicus.gonnect.provisioning:
     directory: etc/gonnect
     no-autodownload: true
-
 finish-args:
   - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
   - --device=all
@@ -49,19 +47,16 @@ finish-args:
   - --filesystem=xdg-download:rw
   # Kerberos socket
   - --filesystem=/run/.heim_org.h5l.kcm-socket
-
 cleanup:
   - '*.la'
   - '*.a'
   - '*.qml'
   - /share/gir-1.0
-
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
   - rm /app/resources/qtwebengine_devtools_resources.pak
   - mkdir -p ${FLATPAK_DEST}/plugins
   - mkdir -p ${FLATPAK_DEST}/etc/gonnect
-
 modules:
   - name: libnotify
     buildsystem: meson
@@ -76,7 +71,6 @@ modules:
         sha256: fc7e901f6a5eec29a604d33c88a0f26caed405bbe7dd24d098fbb15d3c049419
       - type: patch
         path: patches/libnotify-default-action.patch
-
   - name: kerberos
     subdir: src
     config-opts:
@@ -102,7 +96,6 @@ modules:
           url-template: https://kerberos.org/dist/krb5/${major}.${minor}/krb5-${major}.${minor}.${patch}.tar.gz
       - type: file
         path: krb5.conf
-
   - name: opencore-amr
     buildsystem: autotools
     config-opts:
@@ -116,7 +109,6 @@ modules:
           project-id: 21548
           stable-only: true
           url-template: https://sourceforge.net/projects/opencore-amr/files/opencore-amr/opencore-amr-${major}.${minor}.${patch}.tar.gz
-
   - name: vo-amrwbenc
     buildsystem: autotools
     config-opts:
@@ -130,7 +122,6 @@ modules:
           project-id: 322571
           stable-only: true
           url-template: https://downloads.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-${major}.${minor}.${patch}.tar.gz
-
   - name: pjsip
     buildsystem: autotools
     no-parallel-make: true
@@ -152,7 +143,8 @@ modules:
         path: patches/pjproject-site-config.patch
       - type: patch
         path: patches/pjsip-pres-crash.patch
-
+      - type: patch
+        path: patches/pjsip-mwi-crash.patch
   - name: openldap
     config-opts:
       - --disable-static
@@ -166,14 +158,13 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.7.0.tgz
-        sha256: 9e86f37da375aa948a1b478dd76fe87b02090e47c21facae19223588e3407922
+        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.7.1.tgz
+        sha256: 253db80f301258ea69cda1184766d57395b836aaabf41157eb0316eb0fac1341
         x-checker-data:
           type: anitya
           stable-only: true
           project-id: 2551
           url-template: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz
-
   - name: qtwebdav
     buildsystem: cmake-ninja
     config-opts:
@@ -186,7 +177,6 @@ modules:
         path: patches/qtwebdav-cmake.patch
       - type: patch
         path: patches/qtwebdav-ssl-certificates.patch
-
   - name: qtkeychain
     buildsystem: cmake-ninja
     builddir: true
@@ -200,7 +190,6 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
-
   - name: libical
     cleanup:
       - /lib/cmake
@@ -222,7 +211,6 @@ modules:
           type: anitya
           project-id: 1637
           url-template: https://github.com/libical/libical/releases/download/v$version/libical-$version.tar.gz
-
   - name: evolution-data-server
     cleanup:
       - /lib/cmake
@@ -261,7 +249,6 @@ modules:
           name: evolution-data-server
     modules:
       - shared-modules/intltool/intltool-0.51.json
-
   - name: vcard
     buildsystem: cmake-ninja
     sources:
@@ -270,7 +257,6 @@ modules:
         commit: 9e6a5349d27733c931815b2e236807f3414ab251
       - type: patch
         path: patches/vcard-cmake.patch
-
   - name: hidapi
     buildsystem: cmake-ninja
     sources:
@@ -281,7 +267,6 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^(hidapi-[0-9.]+)$
-
   - name: logfault
     buildsystem: cmake-ninja
     sources:
@@ -292,7 +277,6 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9.]+)$
-
   - name: cmark
     buildsystem: cmake-ninja
     builddir: true
@@ -304,7 +288,6 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^([0-9.]+)$
-
   - name: ksyntaxhighlighting
     buildsystem: cmake-ninja
     sources:
@@ -317,7 +300,6 @@ modules:
           tag-pattern: ^v([0-9.]+)$
       - type: patch
         path: patches/ecm-downgrade.patch
-
   - name: gonnect
     buildsystem: cmake-ninja
     config-opts:
@@ -333,7 +315,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.5.0-beta.4
-        commit: 4e5515a533b4a1c75be8bfd44ff99657547478b1
+        tag: v2.5.0-beta.5
+        commit: 61ff25710dc9bba8e145750983aab6a1827c0a5a
     cleanup:
       - /bin/update-emojis
