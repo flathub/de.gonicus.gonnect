@@ -94,6 +94,8 @@ modules:
           project-id: 13287
           stable-only: true
           url-template: https://kerberos.org/dist/krb5/${major}.${minor}/krb5-${major}.${minor}.${patch}.tar.gz
+      - type: patch
+        path: patches/krb5-c23-strchr.patch
       - type: file
         path: krb5.conf
   - name: opencore-amr
@@ -309,13 +311,11 @@ modules:
       - -DCMAKE_UNITY_BUILD=ON
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
       - -DENABLE_GOW_001=ON
-      - -DENABLE_GOW_002=ON
-      - -DENABLE_GOW_003=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.5.0-beta.7
-        commit: 7f3e9dc154080862f3b351a259cba732e9f5842f
+        tag: v2.5.0-beta.8
+        commit: 58cfa3e6263d7b08be71a5c361f78a687b975c67
     cleanup:
       - /bin/update-emojis
