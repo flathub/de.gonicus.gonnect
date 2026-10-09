@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-for cmd in sed git curl uv cargo; do
+for cmd in sed git curl uv cargo yq; do
     hash $cmd 2>/dev/null || { echo >&2 "error: $cmd not found"; exit 1; }
 done
 
