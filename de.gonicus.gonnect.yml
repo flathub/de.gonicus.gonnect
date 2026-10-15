@@ -41,10 +41,6 @@ finish-args:
   - --talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*
   # Access for evolution-data-server avatars
   - --filesystem=xdg-data/evolution/addressbook/system/photos:ro
-  # Access to music folder for ring tones
-  - --filesystem=xdg-music:ro
-  # Place to save download chat attachments
-  - --filesystem=xdg-download:rw
   # Kerberos socket
   - --filesystem=/run/.heim_org.h5l.kcm-socket
 cleanup:
@@ -147,6 +143,8 @@ modules:
         path: patches/pjsip-pres-crash.patch
       - type: patch
         path: patches/pjsip-mwi-crash.patch
+      - type: patch
+        path: patches/pjsip-ice-media-ioqueue.patch
   - name: openldap
     config-opts:
       - --disable-static
@@ -312,11 +310,13 @@ modules:
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
       - -DENABLE_GOW_001=ON
       - -DENABLE_GOW_002=ON
+      - -DENABLE_GOW_004=ON
+      - -DENABLE_GOW_005=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.5.0-beta.8
-        commit: e1f996a277ddd58481266c5878d297bfe21c6320
+        tag: v2.5.0-beta.9
+        commit: 3c224da5bb9c0d479ac723a90b5aef66b1dc3be6
     cleanup:
       - /bin/update-emojis
