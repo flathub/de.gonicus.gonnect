@@ -145,6 +145,8 @@ modules:
         path: patches/pjsip-mwi-crash.patch
       - type: patch
         path: patches/pjsip-ice-media-ioqueue.patch
+      - type: patch
+        path: patches/pjsip-a7fa90f45.patch
   - name: openldap
     config-opts:
       - --disable-static
@@ -158,25 +160,13 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.7.1.tgz
-        sha256: 253db80f301258ea69cda1184766d57395b836aaabf41157eb0316eb0fac1341
+        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.7.2.tgz
+        sha256: aad731aa22118ff327b9b4ddfc4b6f18ef9476586205da88a532e90940b523d2
         x-checker-data:
           type: anitya
           stable-only: true
           project-id: 2551
           url-template: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz
-  - name: qtwebdav
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DBUILD_WITH_QT6=ON
-    sources:
-      - type: git
-        url: https://github.com/PikachuHy/QtWebDAV.git
-        commit: ac39687b8ae16118d385d3694e900becd108a0f2
-      - type: patch
-        path: patches/qtwebdav-cmake.patch
-      - type: patch
-        path: patches/qtwebdav-ssl-certificates.patch
   - name: qtkeychain
     buildsystem: cmake-ninja
     builddir: true
@@ -257,6 +247,10 @@ modules:
         commit: 9e6a5349d27733c931815b2e236807f3414ab251
       - type: patch
         path: patches/vcard-cmake.patch
+      - type: patch
+        path: patches/vcard-do-not-skip-photo.patch
+      - type: patch
+        path: patches/vcard-fix-group-property-name.patch
   - name: hidapi
     buildsystem: cmake-ninja
     sources:
@@ -300,8 +294,46 @@ modules:
           tag-pattern: ^v([0-9.]+)$
       - type: patch
         path: patches/ecm-downgrade.patch
+  - name: sqlcipher
+    buildsystem: autotools
+    config-opts:
+      - "--with-tempstore=always"
+      - "--enable-fts5"
+      - "--disable-tcl"
+      - "--disable-shared"
+    build-options:
+      cflags: "-DSQLITE_HAS_CODEC -fvisibility=hidden -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown"
+      ldflags: "-lcrypto"
+    post-install:
+      - install -d /app/include/sqlcipher
+      - mv /app/include/sqlite3.h /app/include/sqlite3ext.h /app/include/sqlcipher/
+      - mv /app/lib/libsqlite3.a /app/lib/libsqlcipher.a
+      - rm -f /app/lib/pkgconfig/sqlite3.pc /app/bin/sqlite3
+    sources:
+      - type: git
+        url: https://github.com/sqlcipher/sqlcipher.git
+        tag: v4.19.0
+        commit: c4b275a47932888216bade83aff2bbc73df0ff85
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([0-9.]+)$
+  - name: libstemmer
+    buildsystem: simple
+    build-commands:
+      - make CC=cc libstemmer.a
+      - install -Dm644 include/libstemmer.h /app/include/libstemmer.h
+      - install -Dm644 libstemmer.a /app/lib/libstemmer.a
+    sources:
+      - type: git
+        url: https://github.com/snowballstem/snowball.git
+        tag: v3.1.1
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([0-9.]+)$
   - name: gonnect
     buildsystem: cmake-ninja
+    build-options:
+      cxxflags: "-I/app/include/sqlcipher"
     config-opts:
       - -DCMAKE_MODULE_PATH=/app/lib/${FLATPAK_ARCH}-linux-gnu/cmake/Qt6
       - -DCMAKE_LIBRARY_PATH=/usr/lib
@@ -309,14 +341,11 @@ modules:
       - -DCMAKE_UNITY_BUILD=ON
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
       - -DENABLE_GOW_001=ON
-      - -DENABLE_GOW_002=ON
-      - -DENABLE_GOW_004=ON
-      - -DENABLE_GOW_005=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.5.0-beta.9
-        commit: 3c224da5bb9c0d479ac723a90b5aef66b1dc3be6
+        tag: v2.5.0-beta.10
+        commit: 5718dfb1bfd3d2f8d9d62f69e47e33f1610edce2
     cleanup:
       - /bin/update-emojis
