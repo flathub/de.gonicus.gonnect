@@ -1,14 +1,13 @@
 id: de.gonicus.gonnect
 runtime: org.kde.Platform
-runtime-version: '6.10'
+runtime-version: '6.11'
 sdk: org.kde.Sdk
 base: io.qt.qtwebengine.BaseApp
-base-version: '6.10'
+base-version: '6.11'
 command: gonnect
-
 add-extensions:
   de.gonicus.gonnect.plugin:
-    version: '2'
+    version: '3'
     directory: plugins
     subdirectories: true
     no-autodownload: true
@@ -16,7 +15,6 @@ add-extensions:
   de.gonicus.gonnect.provisioning:
     directory: etc/gonnect
     no-autodownload: true
-
 finish-args:
   - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
   - --device=all
@@ -43,25 +41,18 @@ finish-args:
   - --talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*
   # Access for evolution-data-server avatars
   - --filesystem=xdg-data/evolution/addressbook/system/photos:ro
-  # Access to music folder for ring tones
-  - --filesystem=xdg-music:ro
-  # Place to save download chat attachments
-  - --filesystem=xdg-download:rw
   # Kerberos socket
   - --filesystem=/run/.heim_org.h5l.kcm-socket
-
 cleanup:
   - '*.la'
   - '*.a'
   - '*.qml'
   - /share/gir-1.0
-
 cleanup-commands:
   - /app/cleanup-BaseApp.sh
   - rm /app/resources/qtwebengine_devtools_resources.pak
   - mkdir -p ${FLATPAK_DEST}/plugins
   - mkdir -p ${FLATPAK_DEST}/etc/gonnect
-
 modules:
   - name: libnotify
     buildsystem: meson
@@ -76,7 +67,6 @@ modules:
         sha256: fc7e901f6a5eec29a604d33c88a0f26caed405bbe7dd24d098fbb15d3c049419
       - type: patch
         path: patches/libnotify-default-action.patch
-
   - name: kerberos
     subdir: src
     config-opts:
@@ -100,9 +90,10 @@ modules:
           project-id: 13287
           stable-only: true
           url-template: https://kerberos.org/dist/krb5/${major}.${minor}/krb5-${major}.${minor}.${patch}.tar.gz
+      - type: patch
+        path: patches/krb5-c23-strchr.patch
       - type: file
         path: krb5.conf
-
   - name: opencore-amr
     buildsystem: autotools
     config-opts:
@@ -116,7 +107,6 @@ modules:
           project-id: 21548
           stable-only: true
           url-template: https://sourceforge.net/projects/opencore-amr/files/opencore-amr/opencore-amr-${major}.${minor}.${patch}.tar.gz
-
   - name: vo-amrwbenc
     buildsystem: autotools
     config-opts:
@@ -130,7 +120,6 @@ modules:
           project-id: 322571
           stable-only: true
           url-template: https://downloads.sourceforge.net/project/opencore-amr/vo-amrwbenc/vo-amrwbenc-${major}.${minor}.${patch}.tar.gz
-
   - name: pjsip
     buildsystem: autotools
     no-parallel-make: true
@@ -152,7 +141,12 @@ modules:
         path: patches/pjproject-site-config.patch
       - type: patch
         path: patches/pjsip-pres-crash.patch
-
+      - type: patch
+        path: patches/pjsip-mwi-crash.patch
+      - type: patch
+        path: patches/pjsip-ice-media-ioqueue.patch
+      - type: patch
+        path: patches/pjsip-a7fa90f45.patch
   - name: openldap
     config-opts:
       - --disable-static
@@ -166,27 +160,13 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.13.tgz
-        sha256: d693b49517a42efb85a1a364a310aed16a53d428d1b46c0d31ef3fba78fcb656
+        url: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.7.2.tgz
+        sha256: aad731aa22118ff327b9b4ddfc4b6f18ef9476586205da88a532e90940b523d2
         x-checker-data:
           type: anitya
           stable-only: true
           project-id: 2551
           url-template: https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${major}.${minor}.${patch}.tgz
-
-  - name: qtwebdav
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DBUILD_WITH_QT6=ON
-    sources:
-      - type: git
-        url: https://github.com/PikachuHy/QtWebDAV.git
-        commit: ac39687b8ae16118d385d3694e900becd108a0f2
-      - type: patch
-        path: patches/qtwebdav-cmake.patch
-      - type: patch
-        path: patches/qtwebdav-ssl-certificates.patch
-
   - name: qtkeychain
     buildsystem: cmake-ninja
     builddir: true
@@ -195,12 +175,11 @@ modules:
     sources:
       - type: git
         url: https://github.com/frankosterfeld/qtkeychain.git
-        tag: 0.16.0
-        commit: aa6da344e1a20b9194e12bace3665caeea6b6304
+        tag: 0.18.0
+        commit: e86bc3cbb50b172be61ed857803a372412b6ad85
         x-checker-data:
           type: git
           tag-pattern: ^([0-9]+\.[0-9]+\.[0-9]+)$
-
   - name: libical
     cleanup:
       - /lib/cmake
@@ -222,7 +201,6 @@ modules:
           type: anitya
           project-id: 1637
           url-template: https://github.com/libical/libical/releases/download/v$version/libical-$version.tar.gz
-
   - name: evolution-data-server
     cleanup:
       - /lib/cmake
@@ -261,7 +239,6 @@ modules:
           name: evolution-data-server
     modules:
       - shared-modules/intltool/intltool-0.51.json
-
   - name: vcard
     buildsystem: cmake-ninja
     sources:
@@ -270,18 +247,20 @@ modules:
         commit: 9e6a5349d27733c931815b2e236807f3414ab251
       - type: patch
         path: patches/vcard-cmake.patch
-
+      - type: patch
+        path: patches/vcard-do-not-skip-photo.patch
+      - type: patch
+        path: patches/vcard-fix-group-property-name.patch
   - name: hidapi
     buildsystem: cmake-ninja
     sources:
       - type: git
         url: https://github.com/libusb/hidapi.git
-        tag: hidapi-0.15.0
-        commit: d6b2a974608dec3b76fb1e36c189f22b9cf3650c
+        tag: hidapi-0.16.0
+        commit: 750c87abb03282a237297052b84522e6bb3c0616
         x-checker-data:
           type: git
           tag-pattern: ^(hidapi-[0-9.]+)$
-
   - name: logfault
     buildsystem: cmake-ninja
     sources:
@@ -292,9 +271,70 @@ modules:
         x-checker-data:
           type: git
           tag-pattern: ^(v[0-9.]+)$
-
+  - name: cmark
+    buildsystem: cmake-ninja
+    builddir: true
+    sources:
+      - type: git
+        url: https://github.com/commonmark/cmark.git
+        tag: 0.31.2
+        commit: eec0eeba6d31189fd828314576494566d539b1e3
+        x-checker-data:
+          type: git
+          tag-pattern: ^([0-9.]+)$
+  - name: ksyntaxhighlighting
+    buildsystem: cmake-ninja
+    sources:
+      - type: git
+        url: https://invent.kde.org/frameworks/syntax-highlighting.git
+        tag: v6.31.0
+        commit: 6d8ab7945958e7354295db7f399cce06f7de7571
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([0-9.]+)$
+      - type: patch
+        path: patches/ecm-downgrade.patch
+  - name: sqlcipher
+    buildsystem: autotools
+    config-opts:
+      - "--with-tempstore=always"
+      - "--enable-fts5"
+      - "--disable-tcl"
+      - "--disable-shared"
+    build-options:
+      cflags: "-DSQLITE_HAS_CODEC -fvisibility=hidden -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown"
+      ldflags: "-lcrypto"
+    post-install:
+      - install -d /app/include/sqlcipher
+      - mv /app/include/sqlite3.h /app/include/sqlite3ext.h /app/include/sqlcipher/
+      - mv /app/lib/libsqlite3.a /app/lib/libsqlcipher.a
+      - rm -f /app/lib/pkgconfig/sqlite3.pc /app/bin/sqlite3
+    sources:
+      - type: git
+        url: https://github.com/sqlcipher/sqlcipher.git
+        tag: v4.19.0
+        commit: c4b275a47932888216bade83aff2bbc73df0ff85
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([0-9.]+)$
+  - name: libstemmer
+    buildsystem: simple
+    build-commands:
+      - make CC=cc libstemmer.a
+      - install -Dm644 include/libstemmer.h /app/include/libstemmer.h
+      - install -Dm644 libstemmer.a /app/lib/libstemmer.a
+    sources:
+      - type: git
+        url: https://github.com/snowballstem/snowball.git
+        tag: v3.1.1
+        commit: cd195b51e948a902a4312f023f4a14392516a543
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([0-9.]+)$
   - name: gonnect
     buildsystem: cmake-ninja
+    build-options:
+      cxxflags: "-I/app/include/sqlcipher"
     config-opts:
       - -DCMAKE_MODULE_PATH=/app/lib/${FLATPAK_ARCH}-linux-gnu/cmake/Qt6
       - -DCMAKE_LIBRARY_PATH=/usr/lib
@@ -302,13 +342,11 @@ modules:
       - -DCMAKE_UNITY_BUILD=ON
       - -DCMAKE_OPTIMIZE_DEPENDENCIES=ON
       - -DENABLE_GOW_001=ON
-      - -DENABLE_GOW_002=ON
-      - -DENABLE_GOW_003=ON
       - -DENABLE_PCH=ON
     sources:
       - type: git
         url: https://github.com/gonicus/gonnect.git
-        tag: v2.4.1
-        commit: bc537e2ef5a2987147c311940ace0a7284fd9692
+        tag: v2.5.0
+        commit: 3a99e9839cfdbc686a54750ec25468d86998b312
     cleanup:
       - /bin/update-emojis
